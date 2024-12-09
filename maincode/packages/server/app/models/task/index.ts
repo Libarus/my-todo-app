@@ -4,7 +4,7 @@ type TTaskAttributes = {
     id: number;
     title: string;
     description?: string;
-    dueDate: Date;
+    dueDate?: Date;
     completed: boolean;
 };
 
@@ -14,17 +14,14 @@ export class Task extends Model<TTaskAttributes, TTaskCreationAttributes> implem
     public id!: number; // Уникальный идентификатор
     public title!: string; // Название задачи
     public description?: string; // Описание задачи
-    public dueDate: Date = new Date(); // Дата выполнения
+    public dueDate?: Date; // Дата выполнения
     public completed!: boolean; // Флаг завершения задачи
 
     // Методы класса будут определены автоматически при вызове метода `init`
 }
 
 // Функция для инициализации модели
-export function initializeTaskModel(sequelize: Sequelize) {
-
-    console.info('2222');
-    
+export function InitializeTaskModel(sequelize: Sequelize) {
     Task.init(
         {
             id: {

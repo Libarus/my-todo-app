@@ -1,7 +1,8 @@
 import { dbConfig } from '../config/db.config';
 import { Dialect, Sequelize } from 'sequelize';
 
-import { initializeTaskModel } from './task.model';
+import { InitializeTaskModel } from './task';
+import { InitializeUserModel } from './user';
 
 let sequelize: Sequelize | null = null;
 
@@ -24,7 +25,8 @@ export function SequelizeInit(): Promise<unknown> {
             await sequelize.authenticate();
             //console.log('Connection has been established successfully.');
             
-            initializeTaskModel(sequelize);
+            InitializeTaskModel(sequelize);
+            InitializeUserModel(sequelize);
 
             resolve(true);
         } catch (error: unknown) {
