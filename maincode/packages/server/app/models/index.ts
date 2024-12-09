@@ -3,32 +3,46 @@ import { Dialect, Sequelize } from 'sequelize';
 
 import { initializeTaskModel } from './task.model';
 
-export const sequelize = new Sequelize({
-    host: dbConfig.HOST,
-    dialect: dbConfig.dialect as Dialect,
-    port: Number(dbConfig.PORT),
-    username: dbConfig.USER,
-    password: dbConfig.PASSWORD,
-    database: dbConfig.DB,
-});
+let sequelize: Sequelize | null = null;
 
-/*
-    dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, 
-    pool: {
-        max: dbConfig.pool.max,
-        min: dbConfig.pool.min,
-        acquire: dbConfig.pool.acquire,
-        idle: dbConfig.pool.idle,
-    },
-*/
+export function SequelizeInit(): Promise<unknown> {
+    return new Promise<unknown>(async (resolve, reject) => {
+        sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+            host: dbConfig.HOST,
+            dialect: dbConfig.dialect as Dialect,
+            port: Number(dbConfig.PORT),
 
-initializeTaskModel(sequelize);
+            pool: {
+                max: dbConfig.pool.max,
+                min: dbConfig.pool.min,
+                acquire: dbConfig.pool.acquire,
+                idle: dbConfig.pool.idle,
+            },
+        });
 
-try {
-    sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-} catch (error) {
-    console.error('Unable to connect to the database:', error);
+        try {
+            await sequelize.authenticate();
+            //console.log('Connection has been established successfully.');
+            
+            initializeTaskModel(sequelize);
+
+            resolve(true);
+        } catch (error: unknown) {
+            //console.error('Unable to connect to the database:', error.message);
+            reject(error);
+        }
+    });
 }
 
-export default sequelize;
+export function SequelizeSync(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+        try {
+            await sequelize?.sync({ force: false, alter: true }); // Сравниваем структуру моделей с базой данных
+            resolve();
+        } catch (error: unknown) {
+            reject(error);
+        }
+    });
+}
+
+export { sequelize };

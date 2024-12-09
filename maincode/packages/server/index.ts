@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
 import cors from 'cors';
 import express from 'express';
-import { sequelize } from './app/models';
+import cookieParser from 'cookie-parser';
+
+import { SequelizeInit, SequelizeSync } from './app/models';
+import { RoutingInit } from './app/routing';
 
 dotenv.config({ path: '../../.env' });
 
@@ -22,18 +25,23 @@ app.use(express.json());
 // синтаксический анализ запросов content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// Синхронизируем базу данных перед запуском сервера
-try {
-    sequelize.sync({ force: false, alter: true }); // Сравниваем структуру моделей с базой данных
-    console.log('Database synchronized');
-} catch (err) {
-    console.error('Failed to synchronize database:', err);
-}
+// парсинг куки
+app.use(cookieParser());
 
-app.get('/', (_, res) => {
-    res.json('Hello, server is working!');
-});
+SequelizeInit()
+    .then(() => {
+        console.log('Connection has been established successfully!');
 
-app.listen(SERVER_PORT, () => {
-    console.log(`### Server is listening on port: ${SERVER_PORT} ###`);
-});
+        SequelizeSync()
+            .then(() => {
+                console.log('Database synchronized successfully!');
+                RoutingInit(app, Number(SERVER_PORT));
+            })
+            .catch((err) => {
+                console.error(`Unable to synchronize the database :( => ${err.name} // ${err.message}`);
+            });
+        
+    })
+    .catch((err) => {
+        console.error(`Unable to connect to the database :( => ${err.name} // ${err.message}`);
+    });
