@@ -1,29 +1,9 @@
-import { sendResponse, sendError } from '../base';
 
-import { Task } from '../../models/task';
 import { Request, Response } from 'express';
 
-//import { sequelize } from 'app/models';
-//console.log(sequelize);
+import { sendResponse, sendError } from './_base';
+import { Task } from '../models/task.model';
 
-/**
- * @openapi
- * /tasks
- * get:
- *  summary: Get all tasks / Получение всех задач
- *  description: Get all tasks / Получение всех задач
- *  responses:
- *      200:
- *          description: Tasks retrieved successfully / Задачи получены успешно
- *          content:
- *              application/json:
- *                  schema:
- *                      type: array
- *                      items:
- *                          $ref: '#/components/schemas/Task'
- * @param _ 
- * @param res 
- */
 export const getAllTasks = async (_: any, res: Response) => {
     try {
         const tasks = await Task.findAll();

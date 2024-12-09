@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 
-import { sendResponse, sendError } from '../base';
-import { User } from '../../models/user';
+import { sendResponse, sendError } from './_base';
+import { User } from '../models/user.model';
 
 export const getAllUsers = async (_: any, res: Response) => {
     try {

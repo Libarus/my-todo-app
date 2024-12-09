@@ -1,8 +1,8 @@
 import { dbConfig } from '../config/db.config';
 import { Dialect, Sequelize } from 'sequelize';
 
-import { InitializeTaskModel } from './task';
-import { InitializeUserModel } from './user';
+import { InitializeTaskModel } from './task.model';
+import { InitializeUserModel } from './user.model';
 
 let sequelize: Sequelize | null = null;
 

@@ -11,7 +11,7 @@ type TUserAttributes = {
     name?: string;
     email: string;
     password: string;
-    status: EUserStatus; 
+    status?: EUserStatus; 
 };
 
 type TUserCreationAttributes = Optional<TUserAttributes, 'id'>; // Опции создания новой записи
@@ -21,7 +21,7 @@ export class User extends Model<TUserAttributes, TUserCreationAttributes> implem
     public name?: string;
     public email!: string;
     public password!: string;
-    public status!: EUserStatus;
+    public status?: EUserStatus;
 }
 
 // Функция для инициализации модели
